@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Log In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-item>
+    <ion-label position="floating">Email <ion-text color='danger'>*</ion-text></ion-label>
+    <ion-input [(ngModel)]="correo" type="email" placeholder="example@dominio.com" required></ion-input>
+    <ion-avatar slot=end><img src='https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png'/></ion-avatar>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Contraseña <ion-text color="danger">*</ion-text></ion-label>
+    <ion-input [(ngModel)]="contrasena1" type="password" required></ion-input>
+  </ion-item>
+  
+
+  <ion-button (click)='iniciarSesion()' color="primary" expand="block" [routerLink]="['/home']">Iniciar Sesion</ion-button> <! – sacar routing, validación por función — >
+  <ion-button color="primary" expand="block" [routerLink]="['/registro']">Registrarse</ion-button>
+</ion-content>

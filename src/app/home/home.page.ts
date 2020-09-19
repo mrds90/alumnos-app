@@ -6,7 +6,14 @@ import { Component } from '@angular/core';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-
+  materia = 'Matematicas'
+  tiempo = '1 dia y 4 horas'
+    
+    
   constructor() {}
+
+  public scanQR() {
+    //tambien te lo debo
+  }
 
 }

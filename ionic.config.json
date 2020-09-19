@@ -1,5 +1,7 @@
 {
   "name": "alumnos-app",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
