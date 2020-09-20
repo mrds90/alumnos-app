@@ -11,6 +11,7 @@ const routes: Routes = [
     path: 'log-in',
     loadChildren: () => import('./log-in/log-in.module').then( m => m.LogInPageModule)
   },
+  
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
@@ -22,12 +23,24 @@ const routes: Routes = [
   },
   {
     path: 'materias',
-    loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
+    children: [{
+      path: "",
+      loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
+      
+    },
+    {
+      path: ":id",
+      loadChildren: () => import('./materia/materia.module').then( m => m.MateriaPageModule)
+      
+    }
+    ]
+    
   },
   {
     path: 'scan-qr',
     loadChildren: () => import('./scan-qr/scan-qr.module').then( m => m.ScanQrPageModule)
   },
+ 
 ];
 
 @NgModule({
@@ -37,3 +50,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+

@@ -11,12 +11,15 @@ export class MateriasPage implements OnInit
 
   private materias = [
     {
-      nombre:'matematica'
+      id: '1',
+      nombre: 'matematica'
     },
     {
+      id: '2',
       nombre:'lengua'
     },
     {
+      id: '3',
       nombre:'quimica'
     }
   ]
