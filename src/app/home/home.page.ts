@@ -17,11 +17,11 @@ export class HomePage {
   constructor(public barcodeCtrl: BarcodeScanner) { }
   goToBarcodeScan() {
     const options: BarcodeScannerOptions = {
-      preferFrontCamera: true,
+      preferFrontCamera: false,
       showFlipCameraButton: true,
       showTorchButton: true,
       torchOn: false,
-      prompt: 'Place a barcode inside the scan area',
+      prompt: 'Ubique un QR en el área de escaneo',
       resultDisplayDuration: 500,
       formats: 'QR_CODE,PDF_417 ',
       orientation: 'landscape',
@@ -38,8 +38,5 @@ export class HomePage {
     
 
 
-  public scanQR() {
-  
-  }
 
 }
