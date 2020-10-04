@@ -21,6 +21,7 @@ export class HomePage {
 
     alumnoSrv.getAlumnos().subscribe(datos => {
       this.alumnos = datos;
+      //console.log(this.alumnos)
     });
   }
   goToBarcodeScan() {

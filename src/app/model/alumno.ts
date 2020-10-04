@@ -4,4 +4,5 @@ export class Alumno{
   public nombre: string;
   public apellido: string;
   public mail: string;
+  public __v: number;
 }

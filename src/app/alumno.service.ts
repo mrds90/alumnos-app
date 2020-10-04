@@ -10,6 +10,6 @@ export class AlumnoService {
   constructor(private httpClient:HttpClient) { }
 
   getAlumnos() {
-    return this.httpClient.get<Alumno[]>(this.path+'/alumnos')
+    return this.httpClient.get<Alumno[]>(this.path + '/alumnos')
   }
 }
