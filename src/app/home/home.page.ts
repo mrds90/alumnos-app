@@ -1,6 +1,8 @@
 //Prueba
 import { Component } from '@angular/core';
 import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-scanner/ngx';
+import { AlumnoService } from '../alumno.service';
+import { Alumno } from '../model/alumno'
 
 @Component({
   selector: 'app-home',
@@ -8,13 +10,19 @@ import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-sca
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  materia = 'Matematicas'
-  tiempo = '1 dia y 4 horas'
+  private alumnos;
+  materia = 'Matematicas';
+  tiempo = '1 dia y 4 horas';
   
   scannedData: any;
   encodedData: '';
   encodeData: any;
-  constructor(public barcodeCtrl: BarcodeScanner) { }
+  constructor(public barcodeCtrl: BarcodeScanner, public alumnoSrv: AlumnoService) {
+
+    alumnoSrv.getAlumnos().subscribe(datos => {
+      this.alumnos = datos;
+    });
+  }
   goToBarcodeScan() {
     const options: BarcodeScannerOptions = {
       preferFrontCamera: true,
@@ -38,8 +46,5 @@ export class HomePage {
     
 
 
-  public scanQR() {
-  
-  }
 
 }

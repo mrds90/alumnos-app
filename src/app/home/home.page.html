@@ -13,7 +13,14 @@
   <ion-item>
     <ion-label>Te debo un calendario</ion-label>
   </ion-item>
-  
+  <ion-list>
+    <ion-item *ngFor="let item of alumnos">
+      <ion-label>{{item.nombre}}</ion-label>
+      <ion-label>{{item.apellido}}</ion-label>
+      <ion-label>{{item.dni}}</ion-label>
+      <ion-label>{{item.mail}}</ion-label>
+    </ion-item>  
+  </ion-list>
   <ion-button color="primary" expand="block" [routerLink]="['/materias']">Ver materias</ion-button>
   <ion-button color="primary" expand="block" (click)="goToBarcodeScan()">Marcar asistencia</ion-button>
 
