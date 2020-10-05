@@ -12,4 +12,10 @@ export class AlumnoService {
   getAlumnos() {
     return this.httpClient.get<Alumno[]>(this.path + '/alumnos')
   }
+  
+  registrarse(alumno: Alumno) {
+    console.log(this.path + '/alumno');
+    console.log(alumno);
+    return this.httpClient.post(this.path + '/alumno', alumno);
+  }
 }
