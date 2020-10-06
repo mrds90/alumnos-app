@@ -31,7 +31,6 @@ export class RegistroPage {
         this.alumno.mail = this.correo;
         this.alumno.password = this.contrasena1;
         this.alumnoSrv.registrarse(this.alumno).subscribe(nuevo => console.log(nuevo));
-      
       //funcion del servicio
       alert('registro exitoso') 
       window.location.href = '/log-in';

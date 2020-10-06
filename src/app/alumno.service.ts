@@ -6,6 +6,8 @@ import { Alumno } from './model/alumno';
   providedIn: 'root'
 })
 export class AlumnoService {
+  private alumno: Alumno;
+  private id;
   private path = "http://localhost:3000";
   constructor(private httpClient:HttpClient) { }
 
@@ -17,5 +19,10 @@ export class AlumnoService {
     console.log(this.path + '/alumno');
     console.log(alumno);
     return this.httpClient.post(this.path + '/alumno', alumno);
+  }
+
+  logIn(datos) {
+    this.id = this.httpClient.post(this.path + '/singIn', datos);
+    return this.id
   }
 }
