@@ -1,8 +1,10 @@
 //Prueba
 import { Component, OnInit } from '@angular/core';
 import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-scanner/ngx';
+import { LoadingController } from '@ionic/angular';
 import { AlumnoService } from '../alumno.service';
-import { Alumno } from '../model/alumno'
+import { Alumno } from '../model/alumno';
+
 
 @Component({
   selector: 'app-home',
@@ -10,20 +12,26 @@ import { Alumno } from '../model/alumno'
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  private alumno;
+  private alumno=new Alumno;
   materia = 'Matematicas';
   tiempo = '1 dia y 4 horas';
   
   scannedData: any;
   encodedData: '';
   encodeData: any;
-  constructor(public barcodeCtrl: BarcodeScanner, public alumnoSrv: AlumnoService) { }
+  constructor(public barcodeCtrl: BarcodeScanner, public alumnoSrv: AlumnoService,private lodading: LoadingController) { }
   
-  ngOnInit(){
+  public async ngOnInit() {
+    
+    const loading = await this.lodading.create({  message: 'Cargando',
+    //duration: 2000,
+    spinner: 'bubbles'});  
+      
+    loading.present();
     this.alumnoSrv.getAlumno().subscribe(datos => {
-      
-      this.alumno = datos;
-      
+      this.alumno = datos as Alumno;
+      loading.dismiss();
+    
     });
   }
   goToBarcodeScan() {

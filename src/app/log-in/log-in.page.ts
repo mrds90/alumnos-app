@@ -8,7 +8,6 @@ import { AlumnoService } from '../alumno.service';
   styleUrls: ['./log-in.page.scss'],
 })
 export class LogInPage {
-  private id;
   private correo: string;
   private contrasena1: string;
     // private imagen: string = 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
@@ -25,7 +24,8 @@ export class LogInPage {
         },
       err => { console.log(err); this.errorDeInicio() }
     );
-
+    this.alumnoSrv.id = localStorage.getItem('id');
+    console.log("id en log" + this.alumnoSrv.id);
   }
   
     public async errorDeInicio() {
