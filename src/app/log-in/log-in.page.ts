@@ -8,34 +8,41 @@ import { AlumnoService } from '../alumno.service';
   styleUrls: ['./log-in.page.scss'],
 })
 export class LogInPage {
-
+  private id;
   private correo: string;
   private contrasena1: string;
-  public id;
-  // private imagen: string = 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+    // private imagen: string = 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
   constructor(public alumnoSrv: AlumnoService , public alContrl:AlertController) { };
   //
   
   public async iniciarSesion() {
     let datos = { mail: this.correo, password: this.contrasena1 };
-    this.id = await this.alumnoSrv.logIn(datos).subscribe(
-      res => { window.location.href = '/home' },
+    this.alumnoSrv.logIn(datos)
+      .subscribe(
+        res => {
+          localStorage.setItem('id', res as string);
+          window.location.href = '/home'; 
+        },
       err => { console.log(err); this.errorDeInicio() }
-    )
+    );
+
   }
+  
+    public async errorDeInicio() {
+  
+      const cuerpoAleta = {
+        header: "ERROR",
+        subHeader: "Usuario o contraseña incorrecta",
+        buttons: ["ok"]
+      };
+    
+      const alerta = await this.alContrl.create(cuerpoAleta)
+      await alerta.present();
+    }
+  
 
 
-  public async errorDeInicio() {
   
-    const cuerpoAleta = {
-      header: "ERROR",
-      subHeader: "Usuario o contraseña incorrecta",
-      buttons: ["ok"]
-    };
-  
-    const alerta = await this.alContrl.create(cuerpoAleta)
-    await alerta.present();
-  }
   
 
 }
