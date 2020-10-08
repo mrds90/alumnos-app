@@ -33,16 +33,34 @@ export class AlumnoService {
     return this.httpClient.get(this.path + '/materias')
   }
 
-  
-  getComisionesDeMaterias(idMateria) {
-    return this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria)
+  async getMateria(id_materia) {
+    return await this.httpClient.get(this.path + '/materia/' + id_materia).toPromise();
   }
+  
+  async getMateriaDeComision(id_comision) {
+    return await this.httpClient.get(this.path + '/materia_de_comision/' + id_comision).toPromise();
+  }
+
+  getComisionesDeMaterias(idMateria) {
+    return this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria);
+  }
+
+  async getComisionesDeAlumno() {
+    return await this.httpClient.get(this.path + '/comisiones_de_alumno/' + this.id).toPromise();
+  }
+
 
   async getComision(idComision) {
 
     return await this.httpClient.get(this.path + '/comision/' + idComision).toPromise()
     
   }
+
+  inscribirseAComision(comision) {
+    let registro = { id_comision: comision, id_alumno: this.id };
+    return this.httpClient.post(this.path + '/alumno_comision', registro);
+  }
+
 
   
 }

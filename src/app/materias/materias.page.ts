@@ -8,16 +8,39 @@ import { AlumnoService } from '../alumno.service';
   styleUrls: ['./materias.page.scss'],
 })
 export class MateriasPage implements OnInit
-{ 
+{
+  public misMaterias;
   private todasLasMaterias;
   
   
   constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
   
-  ngOnInit(): void {
+  async ngOnInit() {
     this.alumnoSrv.getMaterias().subscribe(datos => {
       this.todasLasMaterias = datos
     });
+    let comisiones
+    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data) { comisiones = data });
+    await promesaComision;
+    let promesaMaterias
+    let materias = [];
+    for (let comision of comisiones) {
+      promesaMaterias = this.alumnoSrv.getMateriaDeComision(comision).then(function (com) { materias.push(com.data) });
+      await promesaMaterias;
+    }
+    
+    let promesaMisMaterias
+    let mis_Materias=[]
+    console.log('las materias son: ',materias)
+    for (let materia of materias) {
+      promesaMisMaterias = this.alumnoSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
+    }
+    await promesaMisMaterias;
+    this.misMaterias=mis_Materias
+    console.log(this.misMaterias)
+    
+
+
   }
   
   public async elegirCarrera() {
@@ -129,7 +152,7 @@ export class MateriasPage implements OnInit
           
       }
       await promesa
-      console.log('las comisiones son: ', cuerpo)
+      
       
       const alert = await this.alertController.create({
       
@@ -146,9 +169,13 @@ export class MateriasPage implements OnInit
             }
           }, {
             text: 'Ok',
-            handler: () => {
-              console.log('Confirm Ok');
+            handler: (comision) => {
+              console.log('Confirm OK');
+              console.log(comision)
               
+              this.alumnoSrv.inscribirseAComision(comision).subscribe(nuevo => console.log(nuevo));
+
+                            
             }
           }
         ]
