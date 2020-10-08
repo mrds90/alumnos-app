@@ -27,6 +27,10 @@ export class AlumnoService {
 
   logIn(datos) {
     return this.httpClient.post(this.path + '/singIn', datos)
+  }
+  
+  getMaterias() {
+    return this.httpClient.get(this.path + '/materias')
     }
   
 }

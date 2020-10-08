@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { AlumnoService } from '../alumno.service';
 
 @Component({
   selector: 'app-materias',
@@ -8,7 +9,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class MateriasPage implements OnInit
 { 
-
+  private todasLasMaterias;
   private materias = [
     {
       id: '1',
@@ -24,10 +25,12 @@ export class MateriasPage implements OnInit
     }
   ]
   
-  constructor(private alertController: AlertController) { }
+  constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
   
   ngOnInit(): void {
-    //throw new Error('Method not implemented.');
+    this.alumnoSrv.getMaterias().subscribe(datos => {
+      this.todasLasMaterias = datos
+    });
   }
   
   public async elegirCarrera() {
@@ -73,25 +76,21 @@ export class MateriasPage implements OnInit
   }
 
   public async elegirMateria() {
+    let cuerpo=[];
+    for (let mat of this.todasLasMaterias) {
+      cuerpo.push( {
+        name: 'checkbox'+mat.id,
+        type: 'radio',
+        label: mat.nombre,
+        value: mat._id
+      })
+        
+    }
+    console.log(cuerpo)
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Materia',
-      inputs: [
-        {
-          name: 'checkbox1',
-          type: 'radio',
-          label: 'Checkbox 1',
-          value: 'value1',
-          checked: true
-        },
-
-        {
-          name: 'checkbox2',
-          type: 'radio',
-          label: 'Checkbox 2',
-          value: 'value2'
-        }
-      ],
+      inputs: cuerpo,
       buttons: [
         {
           text: 'Cancel',
@@ -115,6 +114,22 @@ export class MateriasPage implements OnInit
   }
 
   public async elegirComision() {
+    console.log([
+      {
+        name: 'checkbox1',
+        type: 'radio',
+        label: 'Checkbox 1',
+        value: 'value1',
+        checked: true
+      },
+
+      {
+        name: 'checkbox2',
+        type: 'radio',
+        label: 'Checkbox 2',
+        value: 'value2'
+      }
+    ])
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Comisión',
