@@ -10,20 +10,7 @@ import { AlumnoService } from '../alumno.service';
 export class MateriasPage implements OnInit
 { 
   private todasLasMaterias;
-  private materias = [
-    {
-      id: '1',
-      nombre: 'matematica'
-    },
-    {
-      id: '2',
-      nombre:'lengua'
-    },
-    {
-      id: '3',
-      nombre:'quimica'
-    }
-  ]
+  
   
   constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
   
@@ -86,7 +73,7 @@ export class MateriasPage implements OnInit
       })
         
     }
-    console.log(cuerpo)
+    console.log('las materias son: ', cuerpo)
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Materia',
@@ -101,9 +88,10 @@ export class MateriasPage implements OnInit
           }
         }, {
           text: 'Ok',
-          handler: () => {
-            console.log('Confirm Ok');
-            this.elegirComision();
+          handler: (data) => {
+            console.log('Confirm OK');
+            console.log(data)
+            this.elegirComision(data);
 
           }
         }
@@ -113,61 +101,67 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
-  public async elegirComision() {
-    console.log([
-      {
-        name: 'checkbox1',
-        type: 'radio',
-        label: 'Checkbox 1',
-        value: 'value1',
-        checked: true
-      },
-
-      {
-        name: 'checkbox2',
-        type: 'radio',
-        label: 'Checkbox 2',
-        value: 'value2'
+  public async elegirComision(data) {
+    let comisiones
+    let cuerpo = [];
+    this.alumnoSrv.getComisionesDeMaterias(data).subscribe(async datos => {
+      comisiones = datos
+      console.log(comisiones)
+     
+      let promesas
+      let promesa
+      for (let comision of comisiones) {
+      
+        console.log('buscar comision con nro de id ' + comision)
+      
+        promesa=this.alumnoSrv.getComision(comision).then(function(data){
+          
+          cuerpo.push({
+            name: 'checkbox' + data.id,
+            type: 'radio',
+            label: data.nombre,
+            value: data._id
+          })
+  
+          console.log('hice el push')
+          
+      })
+          
       }
-    ])
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Comisión',
-      inputs: [
-        {
-          name: 'checkbox1',
-          type: 'radio',
-          label: 'Checkbox 1',
-          value: 'value1',
-          checked: true
-        },
+      await promesa
+      console.log('las comisiones son: ', cuerpo)
+      
+      const alert = await this.alertController.create({
+      
+        cssClass: 'my-custom-class',
+        header: 'Comisión',
+        inputs: cuerpo,
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+            handler: () => {
+              console.log('Confirm Cancel');
+            }
+          }, {
+            text: 'Ok',
+            handler: () => {
+              console.log('Confirm Ok');
+              
+            }
+          }
+        ]
+      });
+  
+      await alert.present();
 
-        {
-          name: 'checkbox2',
-          type: 'radio',
-          label: 'Checkbox 2',
-          value: 'value2'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
-        }, {
-          text: 'Ok',
-          handler: () => {
-            console.log('Confirm Ok');
-            
-          }
-        }
-      ]
+
+
     });
-
-    await alert.present();
+    
+    
+    
   }
 
 }

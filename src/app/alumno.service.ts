@@ -31,6 +31,18 @@ export class AlumnoService {
   
   getMaterias() {
     return this.httpClient.get(this.path + '/materias')
-    }
+  }
+
+  
+  getComisionesDeMaterias(idMateria) {
+    return this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria)
+  }
+
+  async getComision(idComision) {
+
+    return await this.httpClient.get(this.path + '/comision/' + idComision).toPromise()
+    
+  }
+
   
 }
