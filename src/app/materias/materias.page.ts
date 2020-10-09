@@ -123,6 +123,7 @@ export class MateriasPage implements OnInit
           handler: (data) => {
             console.log('Confirm OK');
             console.log(data)
+            //Falta desabilitar boton si no hay materia seleccionada
             this.elegirComision(data);
 
           }
@@ -183,8 +184,10 @@ export class MateriasPage implements OnInit
               console.log(comision)
               console.log(materia)
               
-              this.alumnoSrv.inscribirseAComision(comision,materia).subscribe(nuevo => console.log(nuevo));
-
+              
+              this.alumnoSrv.inscribirseAComision(comision, materia).subscribe(nuevo => console.log(nuevo));
+              window.location.reload();
+              //Falta desabilitar boton si no hay comision seleccionada
                             
             }
           }
@@ -228,6 +231,7 @@ export class MateriasPage implements OnInit
             }
             
             console.log('Confirm OK');
+            window.location.reload();
                           
           }
         }
