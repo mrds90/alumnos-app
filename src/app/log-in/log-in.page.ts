@@ -11,7 +11,9 @@ export class LogInPage {
   private correo: string;
   private contrasena1: string;
     // private imagen: string = 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
-  constructor(public alumnoSrv: AlumnoService , public alContrl:AlertController) { };
+  constructor(public alumnoSrv: AlumnoService, public alContrl: AlertController) { 
+    sessionStorage.clear()
+  };
   //
   
   public async iniciarSesion() {
@@ -19,12 +21,13 @@ export class LogInPage {
     this.alumnoSrv.logIn(datos)
       .subscribe(
         res => {
-          localStorage.setItem('id', res as string);
+          sessionStorage.setItem('id', res as string);
+          
           window.location.href = '/home'; 
         },
       err => { console.log(err); this.errorDeInicio() }
     );
-    this.alumnoSrv.id = localStorage.getItem('id');
+    this.alumnoSrv.id = sessionStorage.getItem('id');
     console.log("id en log" + this.alumnoSrv.id);
   }
   

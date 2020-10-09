@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { async } from '@angular/core/testing';
 import { AlertController } from '@ionic/angular';
 import { AlumnoService } from '../alumno.service';
 import { Alumno_Clase } from '../model/alumno_clase';
@@ -16,16 +17,17 @@ export class MateriasPage implements OnInit
 {
   public misMaterias;
   private todasLasMaterias;
-  private inscripciones : Array<Alumno_Clase>;
+  private inscripciones : Array<Alumno_Comision>;
   
   constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
   
   async ngOnInit() {
+    this.alumnoSrv.id = sessionStorage.getItem('id');
     this.alumnoSrv.getMaterias().subscribe(datos => {
       this.todasLasMaterias = datos
     });
     let registros
-    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Clase>) { registros = data });
+    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
     await promesaComision;
     let promesaMaterias
     let materias = [];
@@ -131,10 +133,10 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
-  public async elegirComision(data) {
+  public async elegirComision(materia) {
     let comisiones
     let cuerpo = [];
-    this.alumnoSrv.getComisionesDeMaterias(data).subscribe(async datos => {
+    this.alumnoSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
       comisiones = datos
       console.log(comisiones)
      
@@ -179,8 +181,9 @@ export class MateriasPage implements OnInit
             handler: (comision) => {
               console.log('Confirm OK');
               console.log(comision)
+              console.log(materia)
               
-              this.alumnoSrv.inscribirseAComision(comision).subscribe(nuevo => console.log(nuevo));
+              this.alumnoSrv.inscribirseAComision(comision,materia).subscribe(nuevo => console.log(nuevo));
 
                             
             }
@@ -211,12 +214,20 @@ export class MateriasPage implements OnInit
           }
         }, {
           text: 'Ok',
-          handler: () => {
+          handler:async () => {
+            let registros
+            let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
+            await promesaComision;
+            console.log('Registros es:',registros)
+            for (let inscripcion of registros) {
+              
+              if (inscripcion.id_materia == materia._id){
+                //borrar el registro de inscripcion
+                this.alumnoSrv.desmatricularseAComision(inscripcion._id as String).subscribe(nuevo => nuevo);
+              }
+            }
+            
             console.log('Confirm OK');
-            
-            
-            //this.alumnoSrv.inscribirseAComision(comision).subscribe(nuevo => console.log(nuevo));
-
                           
           }
         }

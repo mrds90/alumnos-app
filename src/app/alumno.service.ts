@@ -12,13 +12,13 @@ export class AlumnoService implements OnInit {
   constructor(private httpClient: HttpClient, private alContrl: AlertController) { }
   
   ngOnInit() { 
-    this.id = localStorage.getItem('id');
+    this.id = sessionStorage.getItem('id');
   }
   getAlumnos() {
   return this.httpClient.get(this.path + '/alumnos')
   }
   getAlumno() {
-    this.id = localStorage.getItem('id');
+    this.id = sessionStorage.getItem('id');
     console.log('el id es: ' + this.id)
     return this.httpClient.get(this.path + '/alumno/' + this.id);
   }
@@ -59,9 +59,15 @@ export class AlumnoService implements OnInit {
     
   }
 
-  inscribirseAComision(comision) {
-    let registro = { id_comision: comision, id_alumno: this.id };
+  inscribirseAComision(comision,materia) {
+    let registro = { id_comision: comision, id_alumno: this.id ,id_materia: materia};
     return this.httpClient.post(this.path + '/alumno_comision', registro);
+  }
+
+  desmatricularseAComision(id_registro: String) {
+    console.log('registro a borrar:' , id_registro)
+    return this.httpClient.delete(this.path + '/alumno_comision/'+ id_registro);
+    
   }
 
 
