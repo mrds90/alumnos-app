@@ -4,6 +4,7 @@ import { AlumnoService } from '../alumno.service';
 import { Alumno_Clase } from '../model/alumno_clase';
 import { Alumno_Comision } from '../model/alumno_comision';
 import { Comision } from '../model/comision';
+import { Materia } from '../model/materia';
 import { Materia_Comision } from '../model/materia_comison';
 
 @Component({
@@ -192,9 +193,38 @@ export class MateriasPage implements OnInit
 
 
     });
-    
-    
-    
+  }
+
+  public async borrarMateria(materia:Materia) {
+
+    const cuerpoAleta = {
+      header: "Desmatricularese",
+      subHeader: "¿Seguro que desea desmatricularse de " + materia.nombre +'?',
+      message: 'Perderá toda la información asociada a la materia',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: () => {
+            console.log('Confirm OK');
+            
+            
+            //this.alumnoSrv.inscribirseAComision(comision).subscribe(nuevo => console.log(nuevo));
+
+                          
+          }
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
   }
 
 }
