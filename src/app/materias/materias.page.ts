@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { AlumnoService } from '../alumno.service';
+import { Alumno_Clase } from '../model/alumno_clase';
+import { Alumno_Comision } from '../model/alumno_comision';
+import { Comision } from '../model/comision';
+import { Materia_Comision } from '../model/materia_comison';
 
 @Component({
   selector: 'app-materias',
@@ -11,7 +15,7 @@ export class MateriasPage implements OnInit
 {
   public misMaterias;
   private todasLasMaterias;
-  
+  private inscripciones : Array<Alumno_Clase>;
   
   constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
   
@@ -19,15 +23,17 @@ export class MateriasPage implements OnInit
     this.alumnoSrv.getMaterias().subscribe(datos => {
       this.todasLasMaterias = datos
     });
-    let comisiones
-    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data) { comisiones = data });
+    let registros
+    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Clase>) { registros = data });
     await promesaComision;
     let promesaMaterias
     let materias = [];
-    for (let comision of comisiones) {
-      promesaMaterias = this.alumnoSrv.getMateriaDeComision(comision).then(function (com) { materias.push(com.data) });
+    for (let registro of registros) {
+
+      promesaMaterias = this.alumnoSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
       await promesaMaterias;
     }
+    this.inscripciones = registros;
     
     let promesaMisMaterias
     let mis_Materias=[]
@@ -137,7 +143,7 @@ export class MateriasPage implements OnInit
       
         console.log('buscar comision con nro de id ' + comision)
       
-        promesa=this.alumnoSrv.getComision(comision).then(function(data){
+        promesa=this.alumnoSrv.getComision(comision).then(function(data:Comision){
           
           cuerpo.push({
             name: 'checkbox' + data.id,

@@ -1,4 +1,5 @@
 export class Alumno_Comision{
+  public _id: string;
   public id_comision: string;
-  public dni_alumno: string;
+  public id_alumno: string;
 }
