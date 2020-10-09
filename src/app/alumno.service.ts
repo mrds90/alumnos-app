@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AlumnoService {
+export class AlumnoService implements OnInit {
  
   public id;
   private path = "http://localhost:3000";
-  constructor(private httpClient: HttpClient, private alContrl:AlertController ) { }
-
+  constructor(private httpClient: HttpClient, private alContrl: AlertController) { }
+  
+  ngOnInit() { 
+    this.id = localStorage.getItem('id');
+  }
   getAlumnos() {
   return this.httpClient.get(this.path + '/alumnos')
   }
