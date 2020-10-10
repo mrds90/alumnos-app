@@ -36,12 +36,12 @@ export class HomePage implements OnInit {
   }
   goToBarcodeScan() {
     const options: BarcodeScannerOptions = {
-      preferFrontCamera: true,
+      preferFrontCamera: false,
       showFlipCameraButton: true,
       showTorchButton: true,
       torchOn: false,
-      prompt: 'Place a barcode inside the scan area',
-      resultDisplayDuration: 500,
+      prompt: 'Sitúe el QR en el recuadro',
+      resultDisplayDuration: 1000,
       formats: 'QR_CODE,PDF_417 ',
       orientation: 'landscape',
     };
