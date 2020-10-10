@@ -5,10 +5,26 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  
+  <ion-item>
+    <ion-label position="floating">DNI <ion-text color='danger'>*</ion-text></ion-label>
+    <ion-input [(ngModel)]="dni" type="text" required></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Nombre <ion-text color='danger'>*</ion-text></ion-label>
+    <ion-input [(ngModel)]="nombre" type="text" placeholder="Juan" required></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Apellido <ion-text color='danger'>*</ion-text></ion-label>
+    <ion-input [(ngModel)]="apellido" type="text" placeholder="García" required></ion-input>
+  </ion-item>
+  
   <ion-item>
     <ion-label position="floating">Email <ion-text color='danger'>*</ion-text></ion-label>
     <ion-input [(ngModel)]="correo" type="email" placeholder="example@dominio.com" required></ion-input>
-    <ion-avatar slot=end><img src='https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png'/></ion-avatar>
+   
   </ion-item>
   <ion-item>
     <ion-label position="floating">Contraseña <ion-text color="danger">*</ion-text></ion-label>
@@ -19,21 +35,7 @@
     <ion-input [(ngModel)]="contrasena2" type="password" required></ion-input>
   </ion-item>
   <ion-item>
-    <ion-radio-group [(ngModel)]="sexo">
-      <ionlabel position="inline">Sexo</ionlabel>
-      <ion-item>
-        <ion-label>Femenino</ion-label>
-        <ion-radio slot="start" value="f"></ion-radio>
-      </ion-item>
-      <ion-item>
-        <ion-label>Masculino</ion-label>
-        <ion-radio slot="start" value="m"></ion-radio>
-      </ion-item>
-      <ion-item>
-        <ion-label>Otro</ion-label>
-        <ion-radio slot="start" value="o"></ion-radio>
-      </ion-item>
-    </ion-radio-group>
+    
   </ion-item>
   <ion-button (click)='guardar()' color="primary" expand="block">Guardar</ion-button>
 </ion-content>

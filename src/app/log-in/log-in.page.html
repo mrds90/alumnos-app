@@ -16,6 +16,6 @@
   </ion-item>
   
 
-  <ion-button (click)='iniciarSesion()' color="primary" expand="block" [routerLink]="['/home']">Iniciar Sesion</ion-button> <! – sacar routing, validación por función — >
+  <ion-button (click)='iniciarSesion()' color="primary" expand="block" [disabled]=" contrasena1==null || correo==null|| contrasena1=='' || correo==''">Iniciar Sesion</ion-button> <! – sacar routing, validación por función — >
   <ion-button color="primary" expand="block" [routerLink]="['/registro']">Registrarse</ion-button>
 </ion-content>

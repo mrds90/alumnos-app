@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      tambien te debo el nombre
+      {{alumno.nombre}} {{alumno.apellido}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -13,7 +13,7 @@
   <ion-item>
     <ion-label>Te debo un calendario</ion-label>
   </ion-item>
-  
+
   <ion-button color="primary" expand="block" [routerLink]="['/materias']">Ver materias</ion-button>
   <ion-button color="primary" expand="block" (click)="goToBarcodeScan()">Marcar asistencia</ion-button>
 
