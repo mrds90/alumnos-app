@@ -15,7 +15,7 @@ import { Materia_Comision } from '../model/materia_comison';
 })
 export class MateriasPage implements OnInit
 {
-  public misMaterias;
+  public misMaterias:Array<Materia>;
   private todasLasMaterias;
   
   
@@ -57,6 +57,7 @@ export class MateriasPage implements OnInit
   
     this.misMaterias = mis_Materias
     console.log(this.misMaterias)
+    this.alumnoSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
   }
   
   public async elegirCarrera() {
@@ -102,14 +103,21 @@ export class MateriasPage implements OnInit
   }
 
   public async elegirMateria() {
-    let cuerpo=[];
+    let cuerpo = [];
+    
     for (let mat of this.todasLasMaterias) {
-      cuerpo.push( {
-        name: 'checkbox'+mat.id,
-        type: 'radio',
-        label: mat.nombre,
-        value: mat._id
+      let bandera =true
+      for (let miMat of this.misMaterias) {
+        if (miMat._id == mat._id) bandera = false;
+      }
+      if (bandera==true)
+      {  cuerpo.push( {
+          name: 'checkbox'+mat.id,
+          type: 'radio',
+          label: mat.nombre,
+          value: mat._id
       })
+      };
         
     }
     console.log('las materias son: ', cuerpo)
@@ -142,19 +150,17 @@ export class MateriasPage implements OnInit
   }
 
   public async elegirComision(materia) {
-    let comisiones
+    let id_comisiones
     let cuerpo = [];
     this.alumnoSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
-      comisiones = datos
-      console.log(comisiones)
+      id_comisiones = datos
+      console.log('id de comisiones de la materia: ',id_comisiones)
      
-      let promesas
+     
       let promesa
-      for (let comision of comisiones) {
-      
-        console.log('buscar comision con nro de id ' + comision)
-      
-        promesa=this.alumnoSrv.getComision(comision).then(function(data:Comision){
+      for (let id_comision of id_comisiones) {
+        console.log('buscar comision con nro de id ' + id_comision)
+        promesa=this.alumnoSrv.getComision(id_comision).then(function(data:Comision){
           
           cuerpo.push({
             name: 'checkbox' + data.id,
@@ -168,7 +174,9 @@ export class MateriasPage implements OnInit
       })
           
       }
+
       await promesa
+      console.log('cuerpo :',cuerpo)
       
       
       const alert = await this.alertController.create({
@@ -194,7 +202,8 @@ export class MateriasPage implements OnInit
               
               
               this.alumnoSrv.inscribirseAComision(comision, materia).subscribe(nuevo => console.log(nuevo));
-              window.location.reload();
+              this.ngOnInit();
+                // window.location.reload();
               //Falta desabilitar boton si no hay comision seleccionada
               }
               else {
@@ -270,9 +279,11 @@ export class MateriasPage implements OnInit
                 this.alumnoSrv.desmatricularseAComision(inscripcion._id as String).subscribe(nuevo => nuevo);
               }
             }
-            
+
+            this.ngOnInit();
             console.log('Confirm OK');
-            window.location.reload();
+            
+            //window.location.reload();
                           
           }
         }

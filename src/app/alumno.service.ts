@@ -2,14 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Alumno_Comision } from './model/alumno_comision';
+import { Comision } from './model/comision';
+import { Materia } from './model/materia';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlumnoService implements OnInit {
   public inscripciones: Array<Alumno_Comision>;
-  public id;
+  public id: String;
+  public miMateria: Materia;
+  
   private path = "http://localhost:3000";
+  public misComisiones: Array<Comision>;
   constructor(private httpClient: HttpClient, private alContrl: AlertController) { }
   
   async ngOnInit() { 
@@ -74,6 +79,21 @@ export class AlumnoService implements OnInit {
     
   }
 
+  async obtenerComisionesDeMateria(id_materia:String) {
+    let materia:Materia;
+    let comisiones = [];
+  await this.getMateria(id_materia).then(mat => { materia = mat; });
 
-  
+    this.miMateria = materia;
+    let registros = this.inscripciones.filter(inscripcion => inscripcion.id_materia==id_materia )
+    // console.log('registro es: ', registros)
+    let promesaMaterias: Promise<void|Comision>;
+    for (let registro of registros) {
+      promesaMaterias = this.getComision(registro.id_comision).then(function (com:Comision) { comisiones.push(com) });
+    }
+    await promesaMaterias;
+    
+    this.misComisiones = comisiones
+    console.log('las comisiones de esta materia son :',this.misComisiones)
+  }  
 }

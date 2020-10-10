@@ -3,13 +3,13 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="materias"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{miMateria.nombre}} </ion-title>
+    <ion-title>{{alumnoSrv.miMateria.nombre}} </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let comision of misComisiones" >  
+    <ion-item *ngFor="let comision of alumnoSrv.misComisiones" >  
       <ion-label [routerLink]="['/clases' ,comision._id]">{{comision.nombre}}</ion-label>
       <ion-icon slot="end" name="trash-outline"  (click)="borrarComision(comision);"></ion-icon>
     </ion-item>

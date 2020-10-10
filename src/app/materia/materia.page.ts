@@ -1,3 +1,4 @@
+import { CommentStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -13,9 +14,6 @@ import { Materia } from '../model/materia';
 })
 export class MateriaPage implements OnInit {
 
-  private misComisiones;
-  private miMateria = new Materia;
-    
   constructor(private alertController: AlertController, private alumnoSrv:AlumnoService,private lodading: LoadingController, private activeteRoute: ActivatedRoute) { }
   
   async ngOnInit() {
@@ -27,54 +25,43 @@ export class MateriaPage implements OnInit {
     await this.alumnoSrv.ngOnInit()
     
       
-    let promesaMaterias
-    let comisiones = [];
-    let id_materia
-    let materia;
+    let id_materia: string;
+    
     this.activeteRoute.paramMap.subscribe(async paramMap => {
       id_materia = paramMap.get('id');
       loading.dismiss()
     });
     // console.log('id de la materia: ', id_materia)
     
-    await this.alumnoSrv.getMateria(id_materia).then(mat => { materia = mat; });
-
-    this.miMateria = materia;
-    console.log('la materia es' , this.miMateria)
-    let registros = this.alumnoSrv.inscripciones.filter(inscripcion => inscripcion.id_materia==id_materia )
-    // console.log('registro es: ', registros)
-    for (let registro of registros) {
-      promesaMaterias = this.alumnoSrv.getComision(registro.id_comision).then(function (com:Comision) { comisiones.push(com) });
-    }
-    await promesaMaterias;
-    
-    this.misComisiones = comisiones
-    console.log('las comisiones de esta materia son :',this.misComisiones)
+   this.alumnoSrv.obtenerComisionesDeMateria(id_materia);
     
   }
   
   
   public async elegirComision() {
-    let comisiones
+    let id_de_comisiones: Array<String>;
     let cuerpo = [];
-    this.alumnoSrv.getComisionesDeMaterias(this.miMateria._id).subscribe(async datos => {
-      comisiones = datos
-      console.log(comisiones)
-      let promesa
-      for (let comision of comisiones) {
+    this.alumnoSrv.getComisionesDeMaterias(this.alumnoSrv.miMateria._id).subscribe(async (datos: Array<String>) => {
+      id_de_comisiones = datos
+      console.log(id_de_comisiones)
+      let promesa: Promise<void | Comision>;
       
-        console.log('buscar comision con nro de id ' + comision)
+      for (let id_comision of id_de_comisiones) {
+        if(this.alumnoSrv.misComisiones.filter(comisiones => comisiones._id==id_comision).length==0)  
+        {
+          console.log('buscar comision con nro de id ' + id_comision)
       
-        promesa=this.alumnoSrv.getComision(comision).then(function(data:Comision){
-          
-          cuerpo.push({
-            name: 'checkbox' + data.id,
-            type: 'radio',
-            label: data.nombre,
-            value: data._id
-          })
+          promesa=this.alumnoSrv.getComision(id_comision).then(function(data:Comision){
+            
+            cuerpo.push({
+              name: 'checkbox' + data.id,
+              type: 'radio',
+              label: data.nombre,
+              value: data._id
+            })
                      
-      })
+        })
+        };
           
       }
       await promesa
@@ -101,8 +88,9 @@ export class MateriaPage implements OnInit {
                 console.log(comision)
                      
               
-                this.alumnoSrv.inscribirseAComision(comision, this.miMateria._id).subscribe(nuevo => console.log(nuevo));
-                window.location.reload();
+                this.alumnoSrv.inscribirseAComision(comision, this.alumnoSrv.miMateria._id).subscribe(nuevo => console.log(nuevo));
+                this.ngOnInit();
+                // window.location.reload();
               }
               else {
                 this.alertaDeNoSeleccion();
@@ -173,7 +161,7 @@ export class MateriaPage implements OnInit {
             this.alumnoSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => nuevo);
             // console.log('borrara esta inscripcion: ', inscripcion)
             console.log('Confirm OK');
-            window.location.reload();
+            this.ngOnInit();
           }
             
             
