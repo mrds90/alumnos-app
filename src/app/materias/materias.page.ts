@@ -36,8 +36,12 @@ export class MateriasPage implements OnInit
       promesaMaterias = this.alumnoSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
       await promesaMaterias;
     }
+
+    materias = materias.filter(function(elem, index, self) {
+      return index === self.indexOf(elem);
+  })
     this.inscripciones = registros;
-    
+  
     let promesaMisMaterias
     let mis_Materias=[]
     console.log('las materias son: ',materias)
@@ -45,7 +49,9 @@ export class MateriasPage implements OnInit
       promesaMisMaterias = this.alumnoSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
     }
     await promesaMisMaterias;
-    this.misMaterias=mis_Materias
+    
+  
+    this.misMaterias = mis_Materias
     console.log(this.misMaterias)
     
 
