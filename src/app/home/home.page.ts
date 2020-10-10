@@ -27,12 +27,13 @@ export class HomePage implements OnInit {
     //duration: 2000,
     spinner: 'bubbles'});  
       
-    loading.present();
+    
     this.alumnoSrv.getAlumno().subscribe(datos => {
       this.alumno = datos as Alumno;
       loading.dismiss();
     
     });
+    loading.present();
   }
   goToBarcodeScan() {
     const options: BarcodeScannerOptions = {

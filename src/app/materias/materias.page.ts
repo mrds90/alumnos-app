@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { async } from '@angular/core/testing';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AlumnoService } from '../alumno.service';
 import { Alumno_Clase } from '../model/alumno_clase';
 import { Alumno_Comision } from '../model/alumno_comision';
@@ -17,30 +17,34 @@ export class MateriasPage implements OnInit
 {
   public misMaterias;
   private todasLasMaterias;
-  private inscripciones : Array<Alumno_Comision>;
   
-  constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
+  
+  constructor(private alertController: AlertController, private alumnoSrv:AlumnoService,private lodading: LoadingController) { }
   
   async ngOnInit() {
-    this.alumnoSrv.id = sessionStorage.getItem('id');
+    const loading = await this.lodading.create({  message: 'Cargando',
+    //duration: 2000,
+      spinner: 'bubbles'
+    });  
+    loading.present()
+    await this.alumnoSrv.ngOnInit()
+    loading.dismiss()
     this.alumnoSrv.getMaterias().subscribe(datos => {
       this.todasLasMaterias = datos
     });
-    let registros
-    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
-    await promesaComision;
+
     let promesaMaterias
     let materias = [];
-    for (let registro of registros) {
+    for (let registro of this.alumnoSrv.inscripciones) {
 
       promesaMaterias = this.alumnoSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
       await promesaMaterias;
     }
-
+    
     materias = materias.filter(function(elem, index, self) {
       return index === self.indexOf(elem);
   })
-    this.inscripciones = registros;
+    
   
     let promesaMisMaterias
     let mis_Materias=[]
@@ -53,9 +57,6 @@ export class MateriasPage implements OnInit
   
     this.misMaterias = mis_Materias
     console.log(this.misMaterias)
-    
-
-
   }
   
   public async elegirCarrera() {
@@ -186,6 +187,7 @@ export class MateriasPage implements OnInit
           }, {
             text: 'Ok',
             handler: (comision) => {
+              if (comision!=undefined){
               console.log('Confirm OK');
               console.log(comision)
               console.log(materia)
@@ -194,6 +196,10 @@ export class MateriasPage implements OnInit
               this.alumnoSrv.inscribirseAComision(comision, materia).subscribe(nuevo => console.log(nuevo));
               window.location.reload();
               //Falta desabilitar boton si no hay comision seleccionada
+              }
+              else {
+              this.alertaDeNoSeleccion(materia);
+            }
                             
             }
           }
@@ -206,7 +212,36 @@ export class MateriasPage implements OnInit
 
     });
   }
+  public async alertaDeNoSeleccion(materia) {
 
+    const cuerpoAleta = {
+      header: "ERROR",
+      subHeader: "No selecciono ninguna comision",
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler:async () => {
+            this.elegirComision(materia);    
+        }
+            
+            
+                          
+          
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
+  }
   public async borrarMateria(materia:Materia) {
 
     const cuerpoAleta = {

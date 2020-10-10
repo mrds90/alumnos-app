@@ -1,18 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Alumno_Comision } from './model/alumno_comision';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlumnoService implements OnInit {
- 
+  public inscripciones: Array<Alumno_Comision>;
   public id;
   private path = "http://localhost:3000";
   constructor(private httpClient: HttpClient, private alContrl: AlertController) { }
   
-  ngOnInit() { 
+  async ngOnInit() { 
     this.id = sessionStorage.getItem('id');
+    let registros
+    await this.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
+    this.inscripciones = registros;
   }
   getAlumnos() {
   return this.httpClient.get(this.path + '/alumnos')
@@ -37,7 +41,7 @@ export class AlumnoService implements OnInit {
   }
 
   async getMateria(id_materia) {
-    return await this.httpClient.get(this.path + '/materia/' + id_materia).toPromise();
+    return this.httpClient.get(this.path + '/materia/' + id_materia).toPromise();
   }
   
   async getMateriaDeComision(id_comision) {

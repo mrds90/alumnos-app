@@ -10,7 +10,7 @@
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let materia of misMaterias" >  
-      <ion-label [routerLink]="['/materias' ,materia.id]">{{materia.nombre}}</ion-label>
+      <ion-label [routerLink]="['/materias' ,materia._id]">{{materia.nombre}}</ion-label>
       <ion-icon slot="end" name="trash-outline"  (click)="borrarMateria(materia);"></ion-icon>
     </ion-item>
   
