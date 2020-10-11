@@ -15,9 +15,11 @@ import { Materia_Comision } from '../model/materia_comison';
 })
 export class MateriasPage implements OnInit
 {
-  public misMaterias:Array<Materia>;
-  private todasLasMaterias;
+
+  public misMaterias: Array<Materia>;
   
+  private todasLasMaterias;
+  private id_materia_activa: string='';
   
   constructor(private alertController: AlertController, private alumnoSrv:AlumnoService,private lodading: LoadingController) { }
   
@@ -149,7 +151,7 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
-  public async elegirComision(materia) {
+  public async elegirComision(materia=this.alumnoSrv.miMateria._id) {
     let id_comisiones
     let cuerpo = [];
     this.alumnoSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
@@ -294,4 +296,52 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
+  async mostrarComisiones(id_materia) {
+    if (this.id_materia_activa == id_materia) this.id_materia_activa = '';
+    else this.id_materia_activa = id_materia;
+    this.alumnoSrv.obtenerComisionesDeMateria(id_materia);
+
+
+
+
+    
+  }
+
+
+  public async borrarComision(comision:Comision) {
+
+    const cuerpoAleta = {
+      header: "Desmatricularese",
+      subHeader: "¿Seguro que desea desmatricularse de " + comision.nombre +'?',
+      message: 'Perderá toda la información asociada a la comision',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler:async () => {
+                      
+            let inscripcion: Array<Alumno_Comision> = this.alumnoSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
+            this.alumnoSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => nuevo);
+            // console.log('borrara esta inscripcion: ', inscripcion)
+            console.log('Confirm OK');
+            this.ngOnInit();
+          }
+            
+            
+                          
+          
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
+  }
 }
