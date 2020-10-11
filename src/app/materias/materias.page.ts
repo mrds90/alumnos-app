@@ -7,6 +7,7 @@ import { Alumno_Comision } from '../model/alumno_comision';
 import { Comision } from '../model/comision';
 import { Materia } from '../model/materia';
 import { Materia_Comision } from '../model/materia_comison';
+import { MateriaService } from '../services/materia.service';
 
 @Component({
   selector: 'app-materias',
@@ -21,7 +22,7 @@ export class MateriasPage implements OnInit
   private todasLasMaterias;
   private id_materia_activa: string='';
   
-  constructor(private alertController: AlertController, private alumnoSrv:AlumnoService,private lodading: LoadingController) { }
+  constructor(private alertController: AlertController,private materiaSrv:MateriaService, private alumnoSrv:AlumnoService,private lodading: LoadingController) { }
   
   async ngOnInit() {
     const loading = await this.lodading.create({  message: 'Cargando',
@@ -31,7 +32,7 @@ export class MateriasPage implements OnInit
     loading.present()
     await this.alumnoSrv.ngOnInit()
     loading.dismiss()
-    this.alumnoSrv.getMaterias().subscribe(datos => {
+    this.materiaSrv.getMaterias().subscribe(datos => {
       this.todasLasMaterias = datos
     });
 
@@ -39,7 +40,7 @@ export class MateriasPage implements OnInit
     let materias = [];
     for (let registro of this.alumnoSrv.inscripciones) {
 
-      promesaMaterias = this.alumnoSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
+      promesaMaterias = this.materiaSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
       await promesaMaterias;
     }
     
@@ -52,14 +53,15 @@ export class MateriasPage implements OnInit
     let mis_Materias=[]
     console.log('las materias son: ',materias)
     for (let materia of materias) {
-      promesaMisMaterias = this.alumnoSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
+      promesaMisMaterias = this.materiaSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
     }
     await promesaMisMaterias;
     
   
     this.misMaterias = mis_Materias
     console.log(this.misMaterias)
-    this.alumnoSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
+    if (this.id_materia_activa == undefined) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
+    else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
   }
   
   public async elegirCarrera() {
@@ -151,10 +153,10 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
-  public async elegirComision(materia=this.alumnoSrv.miMateria._id) {
+  public async elegirComision(materia=this.materiaSrv.miMateria._id) {
     let id_comisiones
     let cuerpo = [];
-    this.alumnoSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
+    this.materiaSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
       id_comisiones = datos
       console.log('id de comisiones de la materia: ',id_comisiones)
      
@@ -162,7 +164,7 @@ export class MateriasPage implements OnInit
       let promesa
       for (let id_comision of id_comisiones) {
         console.log('buscar comision con nro de id ' + id_comision)
-        promesa=this.alumnoSrv.getComision(id_comision).then(function(data:Comision){
+        promesa=this.materiaSrv.getComision(id_comision).then(function(data:Comision){
           
           cuerpo.push({
             name: 'checkbox' + data.id,
@@ -299,7 +301,7 @@ export class MateriasPage implements OnInit
   async mostrarComisiones(id_materia) {
     if (this.id_materia_activa == id_materia) this.id_materia_activa = '';
     else this.id_materia_activa = id_materia;
-    this.alumnoSrv.obtenerComisionesDeMateria(id_materia);
+    this.materiaSrv.obtenerComisionesDeMateria(id_materia);
 
 
 
