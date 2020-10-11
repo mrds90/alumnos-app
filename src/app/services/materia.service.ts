@@ -42,7 +42,7 @@ export class MateriaService {
     
   }
 
-  async obtenerComisionesDeMateria(id_materia:String) {
+  async obtenerMisComisionesDeMateria(id_materia:String) {
     let materia:Materia;
     let comisiones = [];
   await this.getMateria(id_materia).then((mat: Materia) => { materia = mat; });
