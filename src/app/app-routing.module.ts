@@ -27,7 +27,11 @@ const routes: Routes = [
       path: "",
       loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
       
-    }
+    },
+    {
+      path: ':id',
+      loadChildren: () => import('./comision/comision.module').then( m => m.ComisionPageModule)
+    },
     ]
     
   },
