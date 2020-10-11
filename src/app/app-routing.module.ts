@@ -27,11 +27,6 @@ const routes: Routes = [
       path: "",
       loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
       
-    },
-    {
-      path: ":id",
-      loadChildren: () => import('./materia/materia.module').then( m => m.MateriaPageModule)
-      
     }
     ]
     

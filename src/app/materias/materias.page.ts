@@ -60,7 +60,8 @@ export class MateriasPage implements OnInit
   
     this.misMaterias = mis_Materias
     console.log(this.misMaterias)
-    if (this.id_materia_activa == undefined) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
+    
+    if (this.id_materia_activa == undefined || this.misMaterias.filter(materia => materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
     else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
   }
   
