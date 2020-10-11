@@ -36,6 +36,7 @@ export class AlumnoService implements OnInit {
   }
 
   logIn(datos) {
+    console.log(datos);
     return this.httpClient.post(this.path + '/singIn', datos)
   }
   
