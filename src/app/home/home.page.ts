@@ -50,6 +50,7 @@ export class HomePage implements OnInit {
     this.barcodeCtrl.scan(options).then(barcodeData => {
       console.log('Barcode data', barcodeData);
       this.scannedData = barcodeData;
+      this.alumnoSrv.marcarAsistencia(this.scannedData);
 
     }).catch(err => {
       console.log('Error', err);
