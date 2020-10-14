@@ -125,18 +125,32 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
-  public async elegirComision(materia = this.materiaSrv.materiaActiva._id) {
-    let materiaCompleta = this.materiaSrv.todasLasMaterias.filter(Materia => Materia._id == materia);
-    console.log('materiaCompleta: ',materiaCompleta);
+  public async elegirComision(id_materia = this.materiaSrv.materiaActiva._id) {
+    let materiaCompleta = this.materiaSrv.todasLasMaterias.filter(Materia => Materia._id == id_materia);
+    console.log('materiaCompleta: ',materiaCompleta[0].nombre);
     let index = this.materiaSrv.todasLasMaterias.indexOf(materiaCompleta[0]);
-    console.log('index: ',index)
+    console.log('index: ', index)
     let comisiones = this.materiaSrv.todasLasComisiones[index];
-    console.log('comisiones: ', comisiones);
+    console.log('id de comisiones de ', this.materiaSrv.todasLasMaterias[index].nombre ,':', comisiones);
     console.log('todas comisiones completas: ', this.materiaSrv.todasLasComisionesCompletas);
-    let comisionesAMostrar = this.materiaSrv.todasLasComisionesCompletas.filter(val => comisiones.includes(val._id))
-    console.log('comisiones a mostrar1: ',comisionesAMostrar);
-    comisionesAMostrar = comisionesAMostrar.filter(val => !this.materiaSrv.misComisiones.includes(val));
-    console.log('comisiones a mostrar2: ',comisionesAMostrar);
+    let comisionesAMostrarSinFiltrar = this.materiaSrv.todasLasComisionesCompletas.filter(val => comisiones.includes(val._id))
+    console.log('comisiones a mostrar sin Filtrar: ', comisionesAMostrarSinFiltrar, ', y mis comisiones son:', this.materiaSrv.misComisiones);
+    
+    let comisionesAMostrar=[];
+    if (this.materiaSrv.misComisiones.length > 0) {
+      for (let comisionAMostrar of comisionesAMostrarSinFiltrar) {
+
+        for (let miComision of this.materiaSrv.misComisiones) {
+          if (comisionAMostrar._id != miComision._id) {
+            comisionesAMostrar.push(comisionAMostrar);
+          }
+        }
+      }
+    }
+    else
+      comisionesAMostrar = comisionesAMostrarSinFiltrar;
+    // comisionesAMostrar = comisionesAMostrar.filter(val => !this.materiaSrv.misComisiones.includes(val));
+    console.log('comisiones a mostrar filtradas: ',comisionesAMostrar);
         
     let cuerpo = [];
     for (let comisionCompleta of comisionesAMostrar){
@@ -174,16 +188,16 @@ export class MateriasPage implements OnInit
               if (comision!=undefined){
               console.log('Confirm OK');
               console.log(comision)
-              console.log(materia)
+              console.log(id_materia)
               
               
-              this.alumnoSrv.inscribirseAComision(comision, materia).subscribe(nuevo => console.log(nuevo));
+              this.alumnoSrv.inscribirseAComision(comision, id_materia).subscribe(nuevo => console.log(nuevo));
               this.ngOnInit();
                 // window.location.reload();
               //Falta desabilitar boton si no hay comision seleccionada
               }
               else {
-              this.alertaDeNoSeleccion(materia);
+              this.alertaDeNoSeleccion(id_materia);
             }
                             
             }

@@ -15,32 +15,32 @@ import { MateriaConComision } from '../model/materia_con_comision';
 export class MateriaService implements OnInit {
   public todasLasMaterias: Array<Materia>=[]
   public misMaterias: Array<MateriaConComision> = [];
-public todasLasComisiones: Array<Array<String>> = [];
-public todasLasComisionesCompletas: Array<Comision> = [];
-public misComisiones: Array<Comision>=[];
-public materiaActiva: Materia = {nombre:'',_id:''};
-public comsionActiva: Comision;
+  public todasLasComisiones: Array<Array<String>> = [];
+  public todasLasComisionesCompletas: Array<Comision> = [];
+  public misComisiones: Array<Comision>=[];
+  public materiaActiva: Materia = {nombre:'',_id:''};
+  public comsionActiva: Comision;
   private path = "http://localhost:3000";
   
   constructor(private httpClient: HttpClient, private alContrl: AlertController, private alumnoSrv: AlumnoService) { }
 
   async ngOnInit() {
     
-    if (this.todasLasMaterias.length < 1) {
-      this.getMaterias().subscribe((datos: Array<Materia>) => {
-        for (let dato of datos) {
+    
+      this.getMaterias().subscribe(async (MateriasEnBaseDeDatos: Array<Materia>) => {
+        for (let dato of MateriasEnBaseDeDatos) {
           this.todasLasMaterias.push(dato);
-          this.getComisionesDeMaterias(dato._id).subscribe((comisionesDeMateria: Array<String>) => {
-            this.todasLasComisiones.push(comisionesDeMateria);
-            console.log('las comisiones de la materia son: ',comisionesDeMateria)
+          await this.getComisionesDeMaterias(dato._id).then((comisionesDeMateria: Array<String>) => {
+          this.todasLasComisiones.push(comisionesDeMateria);
           })
+          console.log('las comisiones de la materia ', dato.nombre ,' son: ',this.todasLasComisiones[this.todasLasComisiones.length-1])
         }
         
       });
-    }
+    
     await this.getMateriasDeAlumno()
     this.materiaActiva = { nombre: '', _id: '' };
-    this.getComisiones().subscribe((comisiones:Array<Comision>)=>this.todasLasComisionesCompletas=comisiones)
+    this.getComisiones().subscribe((comisiones: Array<Comision>) => { this.todasLasComisionesCompletas = comisiones;console.log('Comisiones completas cargadas')})
     
   
   }
@@ -54,13 +54,9 @@ public comsionActiva: Comision;
   }
   async getMateriasDeAlumno() {
     this.misMaterias = [];
-    let registros
-    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
-    await promesaComision;
-      let promesaMaterias
+    let promesaMaterias
     let materias = [];
-    let comisionesSinAula = [];
-      for (let registro of this.alumnoSrv.inscripciones) {
+    for (let registro of this.alumnoSrv.inscripciones) {
         promesaMaterias = this.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
         await promesaMaterias;
       }
@@ -71,7 +67,7 @@ public comsionActiva: Comision;
     
       let promesaMisMaterias
       let mis_Materias=[]
-      console.log('las materias son: ',materias)
+      console.log('el id de las materias a las que asiste el alumno son: ',materias)
     for (let materia of materias) {
       promesaMisMaterias = this.getMateria(materia).then(function (data) {mis_Materias.push(data) })
       
@@ -97,8 +93,8 @@ public comsionActiva: Comision;
     return await this.httpClient.get(this.path + '/materia_de_comision/' + id_comision).toPromise();
   }
 
-  getComisionesDeMaterias(idMateria) {
-    return this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria);
+  async getComisionesDeMaterias(idMateria) {
+    return await this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria).toPromise();
   }
 
   async getComisionesDeAlumno() {
