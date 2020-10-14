@@ -56,5 +56,10 @@ export class AlumnoService implements OnInit {
     return this.httpClient.delete(this.path + '/alumno_comision/'+ id_registro);
     
   }
+  marcarAsistencia(nombre_aula: string) {
+    let registro = { nombre_aula: nombre_aula, id_alumno: this.id};
+    return this.httpClient.post(this.path + '/marcar_asistencia/', registro);
+
+  }
  
 }
