@@ -1,18 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Alumno_Comision } from './model/alumno_comision';
+import { Comision } from './model/comision';
+import { Materia } from './model/materia';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlumnoService implements OnInit {
- 
-  public id;
+  public inscripciones: Array<Alumno_Comision>;
+  public id: String;
+  
   private path = "http://localhost:3000";
   constructor(private httpClient: HttpClient, private alContrl: AlertController) { }
   
-  ngOnInit() { 
+  async ngOnInit() { 
     this.id = sessionStorage.getItem('id');
+    let registros
+    await this.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
+    this.inscripciones = registros;
   }
   getAlumnos() {
   return this.httpClient.get(this.path + '/alumnos')
@@ -29,35 +36,15 @@ export class AlumnoService implements OnInit {
   }
 
   logIn(datos) {
+    console.log(datos);
     return this.httpClient.post(this.path + '/singIn', datos)
   }
   
-  getMaterias() {
-    return this.httpClient.get(this.path + '/materias')
-  }
-
-  async getMateria(id_materia) {
-    return await this.httpClient.get(this.path + '/materia/' + id_materia).toPromise();
-  }
   
-  async getMateriaDeComision(id_comision) {
-    return await this.httpClient.get(this.path + '/materia_de_comision/' + id_comision).toPromise();
-  }
-
-  getComisionesDeMaterias(idMateria) {
-    return this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria);
-  }
-
   async getComisionesDeAlumno() {
     return await this.httpClient.get(this.path + '/comisiones_de_alumno/' + this.id).toPromise();
   }
 
-
-  async getComision(idComision) {
-
-    return await this.httpClient.get(this.path + '/comision/' + idComision).toPromise()
-    
-  }
 
   inscribirseAComision(comision,materia) {
     let registro = { id_comision: comision, id_alumno: this.id ,id_materia: materia};
@@ -69,7 +56,10 @@ export class AlumnoService implements OnInit {
     return this.httpClient.delete(this.path + '/alumno_comision/'+ id_registro);
     
   }
+  marcarAsistencia(nombre_aula: string) {
+    let registro = { nombre_aula: nombre_aula, id_alumno: this.id};
+    return this.httpClient.post(this.path + '/marcar_asistencia/', registro);
 
-
-  
+  }
+ 
 }

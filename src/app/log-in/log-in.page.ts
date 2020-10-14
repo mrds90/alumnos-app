@@ -8,7 +8,7 @@ import { AlumnoService } from '../alumno.service';
   styleUrls: ['./log-in.page.scss'],
 })
 export class LogInPage {
-  private correo: string;
+  private dni: string;
   private contrasena1: string;
     // private imagen: string = 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
   constructor(public alumnoSrv: AlumnoService, public alContrl: AlertController) { 
@@ -17,7 +17,7 @@ export class LogInPage {
   //
   
   public async iniciarSesion() {
-    let datos = { mail: this.correo, password: this.contrasena1 };
+    let datos = { dni: this.dni, password: this.contrasena1 };
     this.alumnoSrv.logIn(datos)
       .subscribe(
         res => {

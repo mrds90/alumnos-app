@@ -30,10 +30,12 @@ export class RegistroPage {
         this.alumno.apellido = this.apellido;
         this.alumno.mail = this.correo;
         this.alumno.password = this.contrasena1;
-        this.alumnoSrv.registrarse(this.alumno).subscribe(nuevo => console.log(nuevo));
+        this.alumnoSrv.registrarse(this.alumno).subscribe(
+          res => { alert('registro exitoso');window.location.href = '/log-in' },
+          error => alert('usuario ya registrado') 
+        );
       //funcion del servicio
-      alert('registro exitoso') 
-      window.location.href = '/log-in';
+    
     } else {
       alert('ERROR: Las contraseñas no coinciden')
     }

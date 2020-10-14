@@ -8,15 +8,25 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let materia of misMaterias" >  
-      <ion-label [routerLink]="['/materias' ,materia.id]">{{materia.nombre}}</ion-label>
-      <ion-icon slot="end" name="trash-outline"  (click)="borrarMateria(materia);"></ion-icon>
-    </ion-item>
-  
-  </ion-list>
-  <ion-item>
-    <ion-icon slot="start" name="add-outline" (click)="elegirMateria();"></ion-icon>
+  <ion-list *ngFor="let materia of materiaSrv.misMaterias">
+
+  <ion-item>  
+    <h3 (click)="mostrarComisiones(materia.materia._id);">{{materia.materia.nombre}}</h3>
+    <ion-icon slot="end" name="trash-outline"  (click)="borrarMateria(materia);"></ion-icon>
   </ion-item>
+  <ion-list *ngIf="materiaSrv.materiaActiva._id==materia.materia._id" >
+    <ion-item *ngFor="let comision of materiaSrv.misComisiones" >  
+      <ion-label (click)=setComisionActiva(comision) [routerLink]="['/materias' ,comision._id]">{{comision.nombre}}</ion-label>
+      <ion-icon slot="end" name="trash-outline"  (click)="borrarComision(comision);"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" size="1" name="add-outline" (click)="elegirComision();"></ion-icon>
+    </ion-item>
+  </ion-list>
+</ion-list>
+<ion-button (click)="elegirMateria();" color="success" expand="block" fill="clear" shape="round">
+  <ion-icon slot="start" size="2" name="add-outline" ></ion-icon>
+  Agregar Materia
+</ion-button>
   
 </ion-content>

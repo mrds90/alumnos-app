@@ -29,10 +29,9 @@ const routes: Routes = [
       
     },
     {
-      path: ":id",
-      loadChildren: () => import('./materia/materia.module').then( m => m.MateriaPageModule)
-      
-    }
+      path: ':id',
+      loadChildren: () => import('./comision/comision.module').then( m => m.ComisionPageModule)
+    },
     ]
     
   },

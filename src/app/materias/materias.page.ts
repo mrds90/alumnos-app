@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { async } from '@angular/core/testing';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AlumnoService } from '../alumno.service';
 import { Alumno_Clase } from '../model/alumno_clase';
 import { Alumno_Comision } from '../model/alumno_comision';
 import { Comision } from '../model/comision';
 import { Materia } from '../model/materia';
 import { Materia_Comision } from '../model/materia_comison';
+import { MateriaService } from '../services/materia.service';
 
 @Component({
   selector: 'app-materias',
@@ -15,47 +16,23 @@ import { Materia_Comision } from '../model/materia_comison';
 })
 export class MateriasPage implements OnInit
 {
-  public misMaterias;
-  private todasLasMaterias;
-  private inscripciones : Array<Alumno_Comision>;
+
+  public misMaterias: Array<Materia>;
   
-  constructor(private alertController: AlertController, private alumnoSrv:AlumnoService) { }
+  private todasLasMaterias;
+  private id_materia_activa: string='';
+  
+  constructor(private alertController: AlertController,private materiaSrv:MateriaService, private alumnoSrv:AlumnoService,private loading: LoadingController) { }
   
   async ngOnInit() {
-    this.alumnoSrv.id = sessionStorage.getItem('id');
-    this.alumnoSrv.getMaterias().subscribe(datos => {
-      this.todasLasMaterias = datos
-    });
-    let registros
-    let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
-    await promesaComision;
-    let promesaMaterias
-    let materias = [];
-    for (let registro of registros) {
-
-      promesaMaterias = this.alumnoSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
-      await promesaMaterias;
-    }
-
-    materias = materias.filter(function(elem, index, self) {
-      return index === self.indexOf(elem);
-  })
-    this.inscripciones = registros;
-  
-    let promesaMisMaterias
-    let mis_Materias=[]
-    console.log('las materias son: ',materias)
-    for (let materia of materias) {
-      promesaMisMaterias = this.alumnoSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
-    }
-    await promesaMisMaterias;
-    
-  
-    this.misMaterias = mis_Materias
-    console.log(this.misMaterias)
-    
-
-
+    const loading = await this.loading.create({  message: 'Cargando',
+    //duration: 2000,
+      spinner: 'bubbles'
+    });  
+    loading.present()
+    await this.alumnoSrv.ngOnInit()
+    await this.materiaSrv.ngOnInit()
+    loading.dismiss()
   }
   
   public async elegirCarrera() {
@@ -101,17 +78,24 @@ export class MateriasPage implements OnInit
   }
 
   public async elegirMateria() {
-    let cuerpo=[];
-    for (let mat of this.todasLasMaterias) {
-      cuerpo.push( {
-        name: 'checkbox'+mat.id,
-        type: 'radio',
-        label: mat.nombre,
-        value: mat._id
+    let cuerpo = [];
+    
+    for (let mat of this.materiaSrv.todasLasMaterias) {
+      let bandera =true
+      for (let miMat of this.materiaSrv.misMaterias) {
+        if (miMat.materia._id == mat._id) bandera = false;
+      }
+      if (bandera==true)
+      {  cuerpo.push( {
+          name: 'checkbox'+mat._id,
+          type: 'radio',
+          label: mat.nombre,
+          value: mat._id
       })
+      };
         
     }
-    console.log('las materias son: ', cuerpo)
+    
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Materia',
@@ -140,34 +124,34 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
-  public async elegirComision(materia) {
-    let comisiones
+  public async elegirComision(materia = this.materiaSrv.materiaActiva._id) {
+    let materiaCompleta = this.materiaSrv.todasLasMaterias.filter(Materia => Materia._id == materia);
+    console.log('materiaCompleta: ',materiaCompleta);
+    let index = this.materiaSrv.todasLasMaterias.indexOf(materiaCompleta[0]);
+    console.log('index: ',index)
+    let comisiones = this.materiaSrv.todasLasComisiones[index];
+    console.log('comisiones: ', comisiones);
+    console.log('todas comisiones completas: ', this.materiaSrv.todasLasComisionesCompletas);
+    let comisionesAMostrar = this.materiaSrv.todasLasComisionesCompletas.filter(val => comisiones.includes(val._id))
+    console.log('comisiones a mostrar1: ',comisionesAMostrar);
+    comisionesAMostrar = comisionesAMostrar.filter(val => !this.materiaSrv.misComisiones.includes(val));
+    console.log('comisiones a mostrar2: ',comisionesAMostrar);
+        
     let cuerpo = [];
-    this.alumnoSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
-      comisiones = datos
-      console.log(comisiones)
-     
-      let promesas
-      let promesa
-      for (let comision of comisiones) {
-      
-        console.log('buscar comision con nro de id ' + comision)
-      
-        promesa=this.alumnoSrv.getComision(comision).then(function(data:Comision){
-          
-          cuerpo.push({
-            name: 'checkbox' + data.id,
-            type: 'radio',
-            label: data.nombre,
-            value: data._id
-          })
-  
-          console.log('hice el push')
-          
-      })
-          
+    for (let comisionCompleta of comisionesAMostrar){
+        cuerpo.push({
+          name: 'checkbox' + comisionCompleta._id,
+          type: 'radio',
+          label: comisionCompleta.nombre,
+          value: comisionCompleta._id
+        })
+        ;
+
+        console.log('hice el push')
       }
-      await promesa
+
+      
+      console.log('cuerpo :',cuerpo)
       
       
       const alert = await this.alertController.create({
@@ -186,14 +170,20 @@ export class MateriasPage implements OnInit
           }, {
             text: 'Ok',
             handler: (comision) => {
+              if (comision!=undefined){
               console.log('Confirm OK');
               console.log(comision)
               console.log(materia)
               
               
               this.alumnoSrv.inscribirseAComision(comision, materia).subscribe(nuevo => console.log(nuevo));
-              window.location.reload();
+              this.ngOnInit();
+                // window.location.reload();
               //Falta desabilitar boton si no hay comision seleccionada
+              }
+              else {
+              this.alertaDeNoSeleccion(materia);
+            }
                             
             }
           }
@@ -201,12 +191,38 @@ export class MateriasPage implements OnInit
       });
   
       await alert.present();
+    }
+  
+  public async alertaDeNoSeleccion(materia) {
 
-
-
-    });
+    const cuerpoAleta = {
+      header: "ERROR",
+      subHeader: "No selecciono ninguna comision",
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler:async () => {
+            this.elegirComision(materia);    
+        }
+            
+            
+                          
+          
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
   }
-
   public async borrarMateria(materia:Materia) {
 
     const cuerpoAleta = {
@@ -235,9 +251,11 @@ export class MateriasPage implements OnInit
                 this.alumnoSrv.desmatricularseAComision(inscripcion._id as String).subscribe(nuevo => nuevo);
               }
             }
-            
+
+            this.ngOnInit();
             console.log('Confirm OK');
-            window.location.reload();
+            
+            //window.location.reload();
                           
           }
         }
@@ -248,4 +266,60 @@ export class MateriasPage implements OnInit
     await alert.present();
   }
 
+  async mostrarComisiones(id_materia) {
+    if (this.materiaSrv.materiaActiva._id == id_materia) this.materiaSrv.materiaActiva= {nombre:'',_id:''};
+    else 
+    { 
+      for (let materiaAMostrar of this.materiaSrv.misMaterias) {
+      if (materiaAMostrar.materia._id == id_materia) {
+        this.materiaSrv.materiaActiva = materiaAMostrar.materia;
+        this.materiaSrv.misComisiones = materiaAMostrar.comisiones;
+      };
+    }
+  }
+
+    
+  }
+
+
+  public async borrarComision(comision:Comision) {
+
+    const cuerpoAleta = {
+      header: "Desmatricularese",
+      subHeader: "¿Seguro que desea desmatricularse de " + comision.nombre +'?',
+      message: 'Perderá toda la información asociada a la comision',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler:async () => {
+                      
+            let inscripcion: Array<Alumno_Comision> = this.alumnoSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
+            this.alumnoSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => nuevo);
+            // console.log('borrara esta inscripcion: ', inscripcion)
+            console.log('Confirm OK');
+            this.ngOnInit();
+          }
+            
+            
+                          
+          
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
+  }
+  setComisionActiva(comision)
+  {
+    this.materiaSrv.comsionActiva = comision;
+  }
 }

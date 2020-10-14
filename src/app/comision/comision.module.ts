@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { MateriaPageRoutingModule } from './materia-routing.module';
+import { ComisionPageRoutingModule } from './comision-routing.module';
 
-import { MateriaPage } from './materia.page';
+import { ComisionPage } from './comision.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MateriaPageRoutingModule
+    ComisionPageRoutingModule
   ],
-  declarations: [MateriaPage]
+  declarations: [ComisionPage]
 })
-export class MateriaPageModule {}
+export class ComisionPageModule {}
