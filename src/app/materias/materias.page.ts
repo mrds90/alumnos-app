@@ -7,6 +7,7 @@ import { Alumno_Comision } from '../model/alumno_comision';
 import { Comision } from '../model/comision';
 import { Materia } from '../model/materia';
 import { Materia_Comision } from '../model/materia_comison';
+import { MateriaConComision } from '../model/materia_con_comision';
 import { MateriaService } from '../services/materia.service';
 
 @Component({
@@ -223,11 +224,11 @@ export class MateriasPage implements OnInit
     const alert = await this.alertController.create(cuerpoAleta)
     await alert.present();
   }
-  public async borrarMateria(materia:Materia) {
+  public async borrarMateria(materia:MateriaConComision) {
 
     const cuerpoAleta = {
       header: "Desmatricularese",
-      subHeader: "¿Seguro que desea desmatricularse de " + materia.nombre +'?',
+      subHeader: "¿Seguro que desea desmatricularse de " + materia.materia.nombre +'?',
       message: 'Perderá toda la información asociada a la materia',
       buttons: [
         {
@@ -243,17 +244,23 @@ export class MateriasPage implements OnInit
             let registros
             let promesaComision = this.alumnoSrv.getComisionesDeAlumno().then(function (data: Array<Alumno_Comision>) { registros = data });
             await promesaComision;
-            console.log('Registros es:',registros)
-            for (let inscripcion of registros) {
+            console.log('Registros es:', registros)
+            
+            
+            let inscripciones: Array<Alumno_Comision> = this.alumnoSrv.inscripciones.filter(inscripcion => inscripcion.id_materia==materia.materia._id )
+              //borrar el registro de inscripcion
+            console.log('inscripciones: ',inscripciones)
+            for (let inscripcion of inscripciones) {
+             
+              this.alumnoSrv.desmatricularseAComision(inscripcion._id as String).subscribe(nuevo => {
+                nuevo;
+                this.ngOnInit();
+                console.log('Confirm OK');
+              });
               
-              if (inscripcion.id_materia == materia._id){
-                //borrar el registro de inscripcion
-                this.alumnoSrv.desmatricularseAComision(inscripcion._id as String).subscribe(nuevo => nuevo);
-              }
             }
 
-            this.ngOnInit();
-            console.log('Confirm OK');
+            
             
             //window.location.reload();
                           
@@ -302,10 +309,12 @@ export class MateriasPage implements OnInit
           handler:async () => {
                       
             let inscripcion: Array<Alumno_Comision> = this.alumnoSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
-            this.alumnoSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => nuevo);
+            this.alumnoSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => {
+              nuevo; console.log('Confirm OK');
+              this.ngOnInit();
+            });
             // console.log('borrara esta inscripcion: ', inscripcion)
-            console.log('Confirm OK');
-            this.ngOnInit();
+            
           }
             
             

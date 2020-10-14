@@ -7,18 +7,14 @@ import { Aula_Comision } from '../model/aula_comision';
 import { Comision } from '../model/comision';
 import { Materia } from '../model/materia';
 import { Materia_Comision } from '../model/materia_comison';
+import { MateriaConComision } from '../model/materia_con_comision';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MateriaService implements OnInit {
   public todasLasMaterias: Array<Materia>=[]
-  public misMaterias: Array<
-  {
-    materia: Materia,
-    comisiones: Array<Comision>
-  }
-    > = [];
+  public misMaterias: Array<MateriaConComision> = [];
 public todasLasComisiones: Array<Array<String>> = [];
 public todasLasComisionesCompletas: Array<Comision> = [];
 public misComisiones: Array<Comision>=[];
