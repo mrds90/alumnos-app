@@ -11,6 +11,12 @@
   <ion-item>
     <h1>{{materiaSrv.comsionActiva.nombre}}</h1>
   </ion-item>
+  <ion-list *ngFor="let clase of claseSrv.clasesActivas">
+  <ion-item>  
+    <ion-label><b>Clase del {{clase.inicio | date: 'dd/MM/yyyy' }}</b></ion-label>
+    <ion-label slot="end"><b>{{clase.inicio | date: 'HH:mm' }}</b></ion-label>
+  </ion-item>
+</ion-list>
   <ion-item>
     <h4>Asistencias: {{asistencias}}/{{materiaSrv.comsionActiva.clasesTotales}}</h4>
   </ion-item>
