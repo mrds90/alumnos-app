@@ -13,9 +13,7 @@ import { Alumno } from '../model/alumno';
 })
 export class HomePage implements OnInit {
   private alumno=new Alumno;
-  materia = 'Matematicas';
-  tiempo = '1 dia y 4 horas';
-  
+
   scannedData: any;
   encodedData: '';
   encodeData: any;

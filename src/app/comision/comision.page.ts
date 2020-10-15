@@ -11,6 +11,7 @@ import { MateriaService } from '../services/materia.service';
 })
 export class ComisionPage implements OnInit {
   public miComision = new Comision;
+  public asistencias;
   constructor(private activeteRoute:ActivatedRoute, private materiaSrv: MateriaService,private loading:LoadingController) { }
 
   async ngOnInit() {    
@@ -28,6 +29,10 @@ export class ComisionPage implements OnInit {
         loading.dismiss()
       });
     loading.present();
+    this.materiaSrv.getAsistencias().subscribe((vectorAsistencia: Array<String>)=> {
+      this.asistencias=vectorAsistencia.length
+    })
+    console.log('Asistencias: ', this.asistencias)
   };
 
 }

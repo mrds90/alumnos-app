@@ -26,7 +26,8 @@ export class MateriaService implements OnInit {
 
   async ngOnInit() {
     
-    
+    this.todasLasMaterias = []
+    this.todasLasComisiones = []
       this.getMaterias().subscribe(async (MateriasEnBaseDeDatos: Array<Materia>) => {
         for (let dato of MateriasEnBaseDeDatos) {
           this.todasLasMaterias.push(dato);
@@ -45,6 +46,10 @@ export class MateriaService implements OnInit {
   
   }
   
+  getAsistencias() {
+    let registro = { id_comision: this.comsionActiva.id, id_alumno: this.alumnoSrv.id };
+    return this.httpClient.post(this.path + '/consultar_asistencia', registro)
+  }
   getMaterias() {
     return this.httpClient.get(this.path + '/materias')
   }
