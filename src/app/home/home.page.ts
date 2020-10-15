@@ -13,7 +13,7 @@ import { Alumno } from '../model/alumno';
 })
 export class HomePage implements OnInit {
   private alumno=new Alumno;
-
+  
   scannedData: any;
   encodedData: '';
   encodeData: any;
